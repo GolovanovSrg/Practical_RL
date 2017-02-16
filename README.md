@@ -25,26 +25,9 @@ Taught on-campus in [HSE](https://cs.hse.ru) and [Yandex SDA](https://yandexdata
 
 
 # Announcements
-* 1.05.16 - UPD - week8 deadlines have been prolonged till the end of holidays
-* 22.04.16 - YSDA deadlines for week8 set to 30th of __april__ (previously 30 may, which was a typo).
-* 25.03.16 - __HSE important__ next monday lecture is postponed by 1 week due to HSE mid-term exams. Deadlines have been postponed accordingly.
-* 25.03.16 - __week5__ you can submit any atari game you want.
-* 16.03.16 - __week4 homework__ max score threshold for LunarLander reduced to -100
-* 16.03.16 - (hse) shifted deadline for week5
-* 15.03.16 - (hse) added week6 assignment and deadline
-* 10.03.17 - (ysda/hse students) __important__ please consider [Course Projects](https://github.com/yandexdataschool/Practical_RL/wiki/Course-projects) as an alternative way of completing the course.
-* 8.03.17 - YSDA deadlines announced for weeks 3 and 3.5, sry for only doing this now.
-* 01.03.17 - YSDA deadline on week2 homework moved to 08.03.17
-<details><summary>Previous announcements</summary>
-<p><!-- trick from http://stackoverflow.com/questions/32814161/how-to-make-spoiler-text-in-github-wiki-pages -->
-* 28.02.17 - (HSE) homework 4 published
-* 24.02.17 - Dependencies updated ([same url](https://github.com/yandexdataschool/Practical_RL/issues/1)). Please install theano/lasagne/agentnet until week4 or make sure you're familiar enough with your deep learning framework of choice.
-* 23.02.17 - YSDA homework 2 can be found [here](https://github.com/yandexdataschool/Practical_RL/tree/master/week2). If you're from HSE you can opt to submit either old or new whichever you prefer.
-* 17.02.17 - warning! we force-pushed into the repository. Please back-up your github files before you pull!
-* 16.02.17 - Lecture slides are now available through urls in README files for each week like [this](https://github.com/yandexdataschool/Practical_RL/tree/master/week1#materialshttps://github.com/yandexdataschool/Practical_RL/tree/master/week1#materials). You can also find full archive [here](https://yadi.sk/d/loPpY45J3EAYfU).
-* 30.03.17 - YSDA deadlines announced for HW 4
-* 16.02.17 - HSE homework 3 added
-* 14.02.17 - HSE deadlines for weeks 1-2 extended!
+* 16.02.17 - Lectures [moved](https://yadi.sk/d/loPpY45J3EAYfU)
+* 16.02.17 - __HSE homework 3 added__
+* 14.02.17 - __HSE deadlines for weeks 1-2 extended!__
 * 14.02.17 - anytask invites moved [here](https://github.com/yandexdataschool/Practical_RL/wiki/Homeworks-and-grading-(HSE-and-YSDA))
 * 14.02.17 - if you're from HSE track and we didn't reply to your week0 homework submission, raise panic!
 * 11.02.17 - week2 success thresholds are now easier: get >+50 for LunarLander or >-180 for MountainCar. Solving env will yield bonus points.
