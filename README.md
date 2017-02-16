@@ -8,6 +8,7 @@ Taught on-campus in [HSE](https://cs.hse.ru) and [Yandex SDA](https://yandexdata
 * __Git-course.__ Know a way to make the course better? Noticed a typo in a formula? Found a useful link? Made the code more readable? Made a version for alternative framework? You're awesome! [Pull-request](https://help.github.com/articles/about-pull-requests/) it!
 
 # Coordinates and useful links
+* __Lectures: https://yadi.sk/d/loPpY45J3EAYfU__
 * __HSE__ classes are on mondays at 18-10 in Room 505
 * __YSDA__ classes are on thursdays at 18-00 in "Princeton" classroom
 * Lecture slides are [here](https://yadi.sk/d/loPpY45J3EAYfU).
