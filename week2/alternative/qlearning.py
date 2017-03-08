@@ -102,6 +102,6 @@ class QLearningAgent():
     
     gamma = self.discount
     learning_rate = self.alpha  
-    reference_qvalue = reward + self.getValue(nextState)
+    reference_qvalue = reward + gamma * self.getValue(nextState)
     updated_qvalue = (1 - learning_rate) * self.getQValue(state, action) + learning_rate * reference_qvalue
     self.setQValue(state, action, updated_qvalue)
