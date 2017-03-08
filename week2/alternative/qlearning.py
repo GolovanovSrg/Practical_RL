@@ -2,8 +2,7 @@
 # ------------------
 ## based on http://inst.eecs.berkeley.edu/~cs188/sp09/pacman.html
 
-import random,math
-
+import random, math
 import numpy as np
 from collections import defaultdict
 
@@ -27,8 +26,10 @@ class QLearningAgent():
     !!!Important!!!
     NOTE: please avoid using self._qValues directly to make code cleaner
   """
+
   def __init__(self,alpha,epsilon,discount,getLegalActions):
     "We initialize agent and Q-values here."
+    
     self.getLegalActions= getLegalActions
     self._qValues = defaultdict(lambda:defaultdict(lambda:0))
     self.alpha = alpha
@@ -39,15 +40,15 @@ class QLearningAgent():
     """
       Returns Q(state,action)
     """
+    
     return self._qValues[state][action]
 
   def setQValue(self,state,action,value):
     """
       Sets the Qvalue for [state,action] to the given value
     """
+    
     self._qValues[state][action] = value
-
-#---------------------#start of your code#---------------------#
 
   def getValue(self, state):
     """
@@ -56,29 +57,20 @@ class QLearningAgent():
     """
     
     possibleActions = self.getLegalActions(state)
-    #If there are no legal actions, return 0.0
     if len(possibleActions) == 0:
-    	return 0.0
-
-    "*** YOUR CODE HERE ***"
-    return <compute state value>
-    
+        return 0.0
+    return np.amax([self.getQValue(state, a) for a in possibleActions])
+  
   def getPolicy(self, state):
     """
       Compute the best action to take in a state. 
-      
     """
-    possibleActions = self.getLegalActions(state)
-
-    #If there are no legal actions, return None
-    if len(possibleActions) == 0:
-    	return None
     
-    best_action = None
-
-    "*** YOUR CODE HERE ***"
-    best_action = <your code>
-    return best_action
+    possibleActions = self.getLegalActions(state)
+    if len(possibleActions) == 0:
+        return None
+    best_action_idx = np.argmax([self.getQValue(state, a) for a in possibleActions])
+    return possibleActions[best_action_idx]
 
   def getAction(self, state):
     """
@@ -89,23 +81,16 @@ class QLearningAgent():
 
       HINT: You might want to use util.flipCoin(prob)
       HINT: To pick randomly from a list, use random.choice(list)
-
     """
     
-    # Pick Action
     possibleActions = self.getLegalActions(state)
-    action = None
-    
-    #If there are no legal actions, return None
     if len(possibleActions) == 0:
-    	return None
+        return None
 
-    #agent parameters:
-    epsilon = self.epsilon
-
-    "*** YOUR CODE HERE ***"
+    if random.random() < self.epsilon:
+        return random.choice(possibleActions)
     
-    return <put agent's action here>
+    return self.getPolicy(state)
 
   def update(self, state, action, nextState, reward):
     """
@@ -113,20 +98,10 @@ class QLearningAgent():
 
       NOTE: You should never call this function,
       it will be called on your behalf
-
-
     """
-    #agent parameters
+    
     gamma = self.discount
-    learning_rate = self.alpha
-    
-    "*** YOUR CODE HERE ***"    
-    reference_qvalue = <the "correct state value", uses reward and the value of next state>
-    
-    updated_qvalue = (1-learning_rate) * self.getQValue(state,action) + learning_rate * reference_qvalue
-    self.setQValue(state,action,updated_qvalue)
-
-
-#---------------------#end of your code#---------------------#
-
-
+    learning_rate = self.alpha  
+    reference_qvalue = reward + self.getValue(nextState)
+    updated_qvalue = (1 - learning_rate) * self.getQValue(state, action) + learning_rate * reference_qvalue
+    self.setQValue(state, action, updated_qvalue)
