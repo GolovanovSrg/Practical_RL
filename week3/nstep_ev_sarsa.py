@@ -9,43 +9,43 @@ The only thing you must implement is the getValue method.
 
 
 Here's usage example:
->>>from sarsa import SarsaAgent
+>>>from expected_value_sarsa import EVSarsaAgent
 
->>>agent = SarsaAgent(alpha=0.1,epsilon=0.25,discount=0.99,
+>>>agent = EVSarsaAgent(alpha=0.5,epsilon=0.25,discount=0.99,
                        getLegalActions = lambda s: actions_from_that_state)
 >>>action = agent.getAction(state)
 >>>agent.update(state,action, next_state,reward)
 >>>agent.epsilon *= 0.99
 """
+
 import random,math
 
 import numpy as np
-from collections import defaultdict
+from collections import defaultdict, deque
 
-class SarsaAgent():
+class NStepEVSarsaAgent():
   """
-    Classical SARSA agent.
+    Expected Value SARSA Agent.
     
     The two main methods are 
     - self.getAction(state) - returns agent's action in that state
-    - self.update(state,action,reward,nextState,nextAction) - returns agent's next action
+    - self.update(state,action,nextState,reward) - returns agent's next action
 
     Instance variables you have access to
       - self.epsilon (exploration prob)
       - self.alpha (learning rate)
       - self.discount (discount rate aka gamma)
-
   """
 
-  def __init__(self, alpha, epsilon, discount, getLegalActions):
+  def __init__(self,n_step,alpha,epsilon,discount,getLegalActions):
     "We initialize agent and Q-values here."
-    
     self.getLegalActions= getLegalActions
     self._qValues = defaultdict(lambda:defaultdict(lambda:0))
     self.alpha = alpha
     self.epsilon = epsilon
     self.discount = discount
-
+    self.history = deque(maxlen=n_step)
+    
   def getQValue(self, state, action):
     """
       Returns Q(state,action)
@@ -53,13 +53,24 @@ class SarsaAgent():
     
     return self._qValues[state][action]
 
-  def setQValue(self, state, action, value):
+  def setQValue(self,state,action,value):
     """
       Sets the Qvalue for [state,action] to the given value
     """
     
     self._qValues[state][action] = value
 
+  def getValue(self, state):
+    """
+      Returns max_action Q(state,action)
+      where the max is over legal actions.
+    """
+    
+    possibleActions = self.getLegalActions(state)
+    if len(possibleActions) == 0:
+        return 0.0
+    return np.amax([self.getQValue(state, a) for a in possibleActions])
+    
   def getPolicy(self, state):
     """
       Compute the best action to take in a state. 
@@ -85,11 +96,29 @@ class SarsaAgent():
     possibleActions = self.getLegalActions(state)
     if len(possibleActions) == 0:
         return None
-    if np.random.random() < self.epsilon:
+
+    if random.random() < self.epsilon:
         return random.choice(possibleActions)
+    
     return self.getPolicy(state)
 
-  def update(self, state, action, nextState, nextAction, reward):
+  def getExpectedValue(self, state):
+    possibleActions = self.getLegalActions(state)
+    n_actions = len(possibleActions)
+    values = [self.getQValue(state, a) for a in possibleActions]
+    best_action_idx = np.argmax(values)
+    
+    res = 0.0
+    for i in range(n_actions):
+        if i != best_action_idx:
+            res += self.epsilon / n_actions * values[i]
+        else:
+            res += (1 - self.epsilon + self.epsilon / n_actions) * values[i]
+            
+    return res
+        
+
+  def update(self, state, action, nextState, reward):
     """
       You should do your Q-Value update here
 
@@ -99,6 +128,15 @@ class SarsaAgent():
     
     gamma = self.discount
     learning_rate = self.alpha
-    reference_qvalue = reward + gamma * self.getQValue(nextState, nextAction)
-    updated_qvalue = (1 - learning_rate) * self.getQValue(state,action) + learning_rate * reference_qvalue
-    self.setQValue(state,action,updated_qvalue)
+    self.history.append((state, action, reward))
+    
+    upd_state = self.history[0][0]
+    upd_action = self.history[0][1]
+    n_step = len(self.history)
+    rewards = [self.history[i][2] * (gamma ** i)  for i in range(n_step)]
+    
+    
+    reference_qvalue = sum(rewards) + (gamma ** n_step) * self.getExpectedValue(nextState)
+    updated_qvalue = (1 - learning_rate) * self.getQValue(upd_state,upd_action) + learning_rate * reference_qvalue
+    self.setQValue(upd_state,upd_action,updated_qvalue)
+    

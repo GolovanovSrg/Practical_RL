@@ -35,8 +35,8 @@ class EVSarsaAgent():
       - self.epsilon (exploration prob)
       - self.alpha (learning rate)
       - self.discount (discount rate aka gamma)
-
   """
+
   def __init__(self,alpha,epsilon,discount,getLegalActions):
     "We initialize agent and Q-values here."
     self.getLegalActions= getLegalActions
@@ -49,15 +49,15 @@ class EVSarsaAgent():
     """
       Returns Q(state,action)
     """
+    
     return self._qValues[state][action]
 
   def setQValue(self,state,action,value):
     """
       Sets the Qvalue for [state,action] to the given value
     """
+    
     self._qValues[state][action] = value
-
-#---------------------#start of your code#---------------------#
 
   def getValue(self, state):
     """
@@ -67,31 +67,20 @@ class EVSarsaAgent():
     """
     
     possibleActions = self.getLegalActions(state)
-    #If there are no legal actions, return 0.0
     if len(possibleActions) == 0:
-    	return 0.0
-
-    #You'll need this to estimate action probabilities
-    epsilon = self.epsilon
-    
-    value = <Your Code Here>
-    return value
+        return 0.0
+    return np.amax([self.getQValue(state, a) for a in possibleActions])
     
   def getPolicy(self, state):
     """
       Compute the best action to take in a state. 
-      
     """
-    possibleActions = self.getLegalActions(state)
-
-    #If there are no legal actions, return None
-    if len(possibleActions) == 0:
-    	return None
     
-    best_action = None
-
-    best_action = possibleActions[np.argmax([self.getQValue(state, a) for a in possibleActions])]
-    return best_action
+    possibleActions = self.getLegalActions(state)
+    if len(possibleActions) == 0:
+        return None
+    best_action_idx = np.argmax([self.getQValue(state, a) for a in possibleActions])
+    return possibleActions[best_action_idx]
 
   def getAction(self, state):
     """
@@ -102,25 +91,32 @@ class EVSarsaAgent():
 
       HINT: You might want to use util.flipCoin(prob)
       HINT: To pick randomly from a list, use random.choice(list)
-
     """
     
-    # Pick Action
     possibleActions = self.getLegalActions(state)
-    action = None
-    
-    #If there are no legal actions, return None
     if len(possibleActions) == 0:
-    	return None
+        return None
 
-    #agent parameters:
-    epsilon = self.epsilon
+    if random.random() < self.epsilon:
+        return random.choice(possibleActions)
+    
+    return self.getPolicy(state)
 
-    if np.random.random()<=epsilon:
-    	return random.choice(possibleActions)
-    else:
-    	action = self.getPolicy(state)
-    return action
+  def getExpectedValue(self, state):
+    possibleActions = self.getLegalActions(state)
+    n_actions = len(possibleActions)
+    values = [self.getQValue(state, a) for a in possibleActions]
+    best_action_idx = np.argmax(values)
+    
+    res = 0.0
+    for i in range(n_actions):
+        if i != best_action_idx:
+            res += self.epsilon / n_actions * values[i]
+        else:
+            res += (1 - self.epsilon + self.epsilon / n_actions) * values[i]
+            
+    return res
+        
 
   def update(self, state, action, nextState, reward):
     """
@@ -128,18 +124,11 @@ class EVSarsaAgent():
 
       NOTE: You should never call this function,
       it will be called on your behalf
-
-
     """
-    #agent parameters
+    
     gamma = self.discount
     learning_rate = self.alpha
-    
-    reference_qvalue = reward + gamma * self.getValue(nextState)
-    updated_qvalue = (1-learning_rate) * self.getQValue(state,action) + learning_rate * reference_qvalue
+    reference_qvalue = reward + gamma * self.getExpectedValue(nextState)
+    updated_qvalue = (1 - learning_rate) * self.getQValue(state,action) + learning_rate * reference_qvalue
     self.setQValue(state,action,updated_qvalue)
-
-
-#---------------------#end of your code#---------------------#
-
-
+    
